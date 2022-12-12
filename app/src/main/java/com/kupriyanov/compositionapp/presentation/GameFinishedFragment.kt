@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.kupriyanov.compositionapp.databinding.FragmentGameFinishedBinding
 import com.kupriyanov.compositionapp.domain.entities.GameResult
+import com.kupriyanov.compositionapp.domain.entities.GameSettings
 
 class GameFinishedFragment : Fragment() {
 
@@ -50,7 +51,9 @@ class GameFinishedFragment : Fragment() {
     }
 
     private fun parseArgs() {
-        gameResult = requireArguments().getSerializable(KEY_GAME_RESULT) as GameResult
+        requireArguments().getParcelable<GameResult>(KEY_GAME_RESULT)?.let {
+            gameResult = it
+        }
     }
 
     private fun retryGame() {
@@ -69,7 +72,7 @@ class GameFinishedFragment : Fragment() {
         ): GameFinishedFragment {
             return GameFinishedFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(KEY_GAME_RESULT, gameResult)
+                    putParcelable(KEY_GAME_RESULT, gameResult)
                 }
             }
         }
