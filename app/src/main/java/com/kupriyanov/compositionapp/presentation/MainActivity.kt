@@ -1,7 +1,7 @@
 package com.kupriyanov.compositionapp.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.kupriyanov.compositionapp.R
 
 class MainActivity : AppCompatActivity() {

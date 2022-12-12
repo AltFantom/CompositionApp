@@ -29,7 +29,7 @@ class ChooseLevelFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        with (binding) {
+        with(binding) {
             buttonTest.setOnClickListener {
                 launchGameFragment(Level.TEST)
             }

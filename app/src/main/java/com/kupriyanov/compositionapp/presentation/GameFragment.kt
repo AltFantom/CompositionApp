@@ -40,11 +40,11 @@ class GameFragment : Fragment() {
         binding.tvSum.setOnClickListener {
             launchGameFinishedFragment(
                 GameResult(
-                true,
-                23,
-                25,
-                gameSettings
-            )
+                    true,
+                    23,
+                    25,
+                    gameSettings
+                )
             )
         }
     }

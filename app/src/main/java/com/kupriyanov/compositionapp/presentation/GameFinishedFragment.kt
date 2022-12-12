@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.kupriyanov.compositionapp.databinding.FragmentGameFinishedBinding
 import com.kupriyanov.compositionapp.domain.entities.GameResult
-import com.kupriyanov.compositionapp.domain.entities.GameSettings
 
 class GameFinishedFragment : Fragment() {
 
