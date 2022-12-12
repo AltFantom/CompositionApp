@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.kupriyanov.compositionapp.R
 import com.kupriyanov.compositionapp.databinding.FragmentWelcomeBinding
 
 class WelcomeFragment : Fragment() {
@@ -23,9 +24,21 @@ class WelcomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.buttonUnderstand.setOnClickListener {
+        setupButtonClickListener()
+    }
 
+    private fun setupButtonClickListener() {
+        binding.buttonUnderstand.setOnClickListener {
+            launchChooseLevelFragment()
         }
+    }
+
+    private fun launchChooseLevelFragment() {
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_container, ChooseLevelFragment.newInstance())
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
