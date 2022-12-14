@@ -41,12 +41,15 @@ class GameViewModel : ViewModel() {
     val progressBarTint: LiveData<Int>
         get() = _progressBarTint
 
-    private var _isReachThresholdOfRightResponse = MutableLiveData<Boolean>(false)
+    private var _isReachThresholdOfRightResponse = MutableLiveData(false)
     val isReachThresholdOfRightResponse: LiveData<Boolean>
         get() = _isReachThresholdOfRightResponse
 
+    private var _countResponse = MutableLiveData(0)
+    val countResponse: LiveData<Int>
+        get() = _countResponse
+
     private var launchTimer: CountDownTimer? = null
-    private var countResponse = 0
 
     private val _shouldLaunchGameFinishedFragment = MutableLiveData(
         false
@@ -71,7 +74,7 @@ class GameViewModel : ViewModel() {
                 _score.value = _score.value?.inc()
             }
         }
-        countResponse++
+        _countResponse.value = _countResponse.value?.inc()
         _score.value?.let {
             if (it >= minCountOfRightAnswers) {
                 _isReachThresholdOfRightResponse.value = true
@@ -96,7 +99,11 @@ class GameViewModel : ViewModel() {
     }
 
     fun countPercentOfRightAnswers(minPercentOfRightAnswers: Int) {
-        _percentOfRightAnswers.value = ((_score.value?.times(100))?.div(countResponse))
+        _percentOfRightAnswers.value = (_countResponse.value?.let {
+            (_score.value?.times(100))?.div(
+                it
+            )
+        })
         _percentOfRightAnswers.value?.let {
             if (it >= minPercentOfRightAnswers) {
                 _progressBarTint.value = android.R.color.holo_green_light
@@ -104,7 +111,22 @@ class GameViewModel : ViewModel() {
                 _progressBarTint.value = android.R.color.holo_red_light
             }
         }
+    }
 
+    fun isWinner(minPercentOfRightAnswers: Int, minCountOfRightAnswers: Int): Boolean {
+        var isPercentMatch = false
+        var isScoreMatch = false
+        _percentOfRightAnswers.value?.let {
+            if (it >= minPercentOfRightAnswers) {
+                isPercentMatch = true
+            }
+        }
+        _score.value?.let {
+            if (it >= minCountOfRightAnswers) {
+                isScoreMatch = true
+            }
+        }
+        return isPercentMatch && isScoreMatch
     }
 
     fun resetShouldLaunchGameFinished() {
@@ -113,7 +135,7 @@ class GameViewModel : ViewModel() {
 
     fun resetScore() {
         _score.value = 0
-        countResponse = 0
+        _countResponse.value = 0
         _percentOfRightAnswers.value = 0
     }
 

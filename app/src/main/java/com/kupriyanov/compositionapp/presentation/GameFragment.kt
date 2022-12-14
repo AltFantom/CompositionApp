@@ -20,6 +20,8 @@ class GameFragment : Fragment() {
     private lateinit var level: Level
     private lateinit var textProgressAnswers: String
     private lateinit var gameSettings: GameSettings
+    private var score = 0
+    private var countOfQuestions = 0
 
     private var _binding: FragmentGameBinding? = null
     private val binding: FragmentGameBinding
@@ -82,16 +84,23 @@ class GameFragment : Fragment() {
         setupPercentOfRightAnswersObserver()
         setupProgressBarTintObserver()
         setupIsReachThresholdOfRightResponseObserver()
+        setupCountResponseObserver()
     }
 
     private fun setupShouldLaunchGameFinishedFragmentObserver() {
         viewModel.shouldLaunchGameFinishedFragment.observe(viewLifecycleOwner) {
-            TODO("launchGameFinishedFragment")
-            /*if (it) {
+            if (it) {
+                val minPercentOfRightAnswers = gameSettings.minPercentOfRightAnswers
+                val minCountOfRightAnswers = gameSettings.minCountOfRightAnswers
                 launchGameFinishedFragment(
-                    GameResult()
+                    GameResult(
+                        viewModel.isWinner(minPercentOfRightAnswers, minCountOfRightAnswers),
+                        score,
+                        countOfQuestions,
+                        gameSettings
+                    )
                 )
-            }*/
+            }
         }
     }
 
@@ -112,6 +121,12 @@ class GameFragment : Fragment() {
         }
     }
 
+    private fun setupCountResponseObserver() {
+        viewModel.countResponse.observe(viewLifecycleOwner) {
+            countOfQuestions = it
+        }
+    }
+
     private fun setupPercentOfRightAnswersObserver() {
         viewModel.percentOfRightAnswers.observe(viewLifecycleOwner) {
             binding.progressBar.progress = it
@@ -126,6 +141,7 @@ class GameFragment : Fragment() {
 
     private fun setupScoreObserver() {
         viewModel.score.observe(viewLifecycleOwner) {
+            score = it
             binding.tvProgressAnswers.text = String.format(
                 textProgressAnswers,
                 it,
