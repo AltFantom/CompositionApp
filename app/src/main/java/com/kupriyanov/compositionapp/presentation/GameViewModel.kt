@@ -1,6 +1,7 @@
 package com.kupriyanov.compositionapp.presentation
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ class GameViewModel : ViewModel() {
     private val getGameSettingsUseCase = GetGameSettingsUseCase(repository)
     private val generateQuestionUseCase = GenerateQuestionUseCase(repository)
 
-    private val _gameSettings = MutableLiveData<GameSettings>()
+    private var _gameSettings = MutableLiveData<GameSettings>()
     val gameSettings: LiveData<GameSettings>
         get() = _gameSettings
 
@@ -57,9 +58,8 @@ class GameViewModel : ViewModel() {
     val shouldLaunchGameFinishedFragment: LiveData<Boolean>
         get() = _shouldLaunchGameFinishedFragment
 
-    fun setupGameSettings(level: Level): GameSettings {
+    fun setupGameSettings(level: Level) {
         _gameSettings.value = getGameSettingsUseCase(level)
-        return getGameSettingsUseCase(level)
     }
 
     fun generateQuestion() {

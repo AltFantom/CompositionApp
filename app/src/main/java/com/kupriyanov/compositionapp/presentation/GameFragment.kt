@@ -43,6 +43,8 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         parseParams()
+        setupGameSettingsObserver()
+        viewModel.setupGameSettings(level)
         viewModel.generateQuestion()
         viewModel.launchTimer(gameSettings.gameTimeInSeconds)
         setupObserves()
@@ -58,7 +60,6 @@ class GameFragment : Fragment() {
 
     private fun parseParams() {
         viewModel = ViewModelProvider(requireActivity())[GameViewModel::class.java]
-        gameSettings = viewModel.setupGameSettings(level)
         textProgressAnswers = binding.tvProgressAnswers.text.toString()
     }
 
@@ -85,6 +86,12 @@ class GameFragment : Fragment() {
         setupProgressBarTintObserver()
         setupIsReachThresholdOfRightResponseObserver()
         setupCountResponseObserver()
+    }
+
+    private fun setupGameSettingsObserver() {
+        viewModel.gameSettings.observe(viewLifecycleOwner) {
+            gameSettings = it
+        }
     }
 
     private fun setupShouldLaunchGameFinishedFragmentObserver() {
