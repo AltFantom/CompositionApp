@@ -1,150 +1,151 @@
 package com.kupriyanov.compositionapp.presentation
 
+import android.app.Application
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.kupriyanov.compositionapp.R
 import com.kupriyanov.compositionapp.data.GameRepositoryImpl
+import com.kupriyanov.compositionapp.domain.entities.GameResult
 import com.kupriyanov.compositionapp.domain.entities.GameSettings
 import com.kupriyanov.compositionapp.domain.entities.Level
 import com.kupriyanov.compositionapp.domain.entities.Question
 import com.kupriyanov.compositionapp.domain.usecases.GenerateQuestionUseCase
 import com.kupriyanov.compositionapp.domain.usecases.GetGameSettingsUseCase
 
-class GameViewModel : ViewModel() {
+class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = GameRepositoryImpl
 
     private val getGameSettingsUseCase = GetGameSettingsUseCase(repository)
     private val generateQuestionUseCase = GenerateQuestionUseCase(repository)
 
-    private var _gameSettings = MutableLiveData<GameSettings>()
-    val gameSettings: LiveData<GameSettings>
-        get() = _gameSettings
+    private val context = application
+
+    private var countOfRightAnswers = 0
+    private var countOfQuestions = 0
+
+    private lateinit var gameSettings: GameSettings
+    private var timer: CountDownTimer? = null
+
+    private val _formattedTime = MutableLiveData<String>()
+    val formattedTime: LiveData<String>
+        get() = _formattedTime
 
     private val _question = MutableLiveData<Question>()
     val question: LiveData<Question>
         get() = _question
 
-    private val _score = MutableLiveData(0)
-    val score: LiveData<Int>
-        get() = _score
-
-    private var _timer = MutableLiveData<String>()
-    val timer: LiveData<String>
-        get() = _timer
-
-    private var _percentOfRightAnswers = MutableLiveData<Int>()
+    private val _percentOfRightAnswers = MutableLiveData<Int>()
     val percentOfRightAnswers: LiveData<Int>
         get() = _percentOfRightAnswers
 
-    private var _progressBarTint = MutableLiveData<Int>()
-    val progressBarTint: LiveData<Int>
-        get() = _progressBarTint
+    private val _progressAnswers = MutableLiveData<String>()
+    val progressAnswers: LiveData<String>
+        get() = _progressAnswers
 
-    private var _isReachThresholdOfRightResponse = MutableLiveData(false)
-    val isReachThresholdOfRightResponse: LiveData<Boolean>
-        get() = _isReachThresholdOfRightResponse
+    private val _enoughCount = MutableLiveData<Boolean>()
+    val enoughCount: LiveData<Boolean>
+        get() = _enoughCount
 
-    private var _countResponse = MutableLiveData(0)
-    val countResponse: LiveData<Int>
-        get() = _countResponse
+    private val _enoughPercent = MutableLiveData<Boolean>()
+    val enoughPercent: LiveData<Boolean>
+        get() = _enoughPercent
 
-    private var launchTimer: CountDownTimer? = null
+    private val _minPercent = MutableLiveData<Int>()
+    val minPercent: LiveData<Int>
+        get() = _minPercent
 
-    private val _shouldLaunchGameFinishedFragment = MutableLiveData(
-        false
-    )
-    val shouldLaunchGameFinishedFragment: LiveData<Boolean>
-        get() = _shouldLaunchGameFinishedFragment
+    private val _gameResult = MutableLiveData<GameResult>()
+    val gameResult: LiveData<GameResult>
+        get() = _gameResult
 
-    fun setupGameSettings(level: Level) {
-        _gameSettings.value = getGameSettingsUseCase(level)
+    fun startGame(level: Level) {
+        setupGameSettings(level)
+        startTimer()
+        generateQuestion()
+        updateProgress()
     }
 
-    fun generateQuestion() {
-        _question.value = gameSettings.value?.let {
-            generateQuestionUseCase(it.maxSumValue)
+    fun chooseAnswer(number: Int) {
+        checkAnswer(number)
+        updateProgress()
+        generateQuestion()
+    }
+
+    private fun setupGameSettings(level: Level) {
+        gameSettings = getGameSettingsUseCase(level)
+        _minPercent.value = gameSettings.minPercentOfRightAnswers
+    }
+
+    private fun updateProgress() {
+        val percent = calculatePercentOfRightAnswers()
+        _percentOfRightAnswers.value = percent
+        _progressAnswers.value = String.format(
+            context.resources.getString(R.string.progress_answers),
+            countOfRightAnswers,
+            gameSettings.minCountOfRightAnswers
+        )
+        _enoughCount.value = countOfRightAnswers >= gameSettings.minCountOfRightAnswers
+        _enoughPercent.value = percent >= gameSettings.minPercentOfRightAnswers
+    }
+
+    private fun calculatePercentOfRightAnswers(): Int {
+        return try {
+            (countOfRightAnswers * 100) / countOfQuestions
+        } catch (e: ArithmeticException) {
+            0
         }
     }
 
-    fun isRightAnswer(answer: String, minCountOfRightAnswers: Int) {
-        question.value?.let {
-            if ((it.sum - it.visibleNumber) == answer.toInt()) {
-                _score.value = _score.value?.inc()
-            }
+    private fun checkAnswer(number: Int) {
+        val rightAnswer = question.value?.rightAnswer
+        if (number == rightAnswer) {
+            countOfRightAnswers++
         }
-        _countResponse.value = _countResponse.value?.inc()
-        _score.value?.let {
-            if (it >= minCountOfRightAnswers) {
-                _isReachThresholdOfRightResponse.value = true
-            }
-        }
+        countOfQuestions++
     }
 
-    fun launchTimer(timeInSeconds: Int) {
-        val time = (timeInSeconds * 1000).toLong()
-        launchTimer = object : CountDownTimer(time, 1000) {
-            override fun onTick(milliseconds: Long) {
-                val s: Long = milliseconds % 60000 / 1000
-                val m: Long = milliseconds / 60000
-                _timer.value = String.format("%02d:%02d", m, s)
+    private fun generateQuestion() {
+        _question.value = generateQuestionUseCase(gameSettings.maxSumValue)
+    }
+
+    private fun startTimer() {
+        timer = object : CountDownTimer(
+            gameSettings.gameTimeInSeconds * MILLIS_IN_SECONDS,
+            MILLIS_IN_SECONDS
+        ) {
+            override fun onTick(millisUntilFinished: Long) {
+                _formattedTime.value = formatTime(millisUntilFinished)
             }
 
             override fun onFinish() {
-                launchTimer = null
-                _shouldLaunchGameFinishedFragment.value = true
-            }
-        }.start()
-    }
-
-    fun countPercentOfRightAnswers(minPercentOfRightAnswers: Int) {
-        _percentOfRightAnswers.value = (_countResponse.value?.let {
-            (_score.value?.times(100))?.div(
-                it
-            )
-        })
-        _percentOfRightAnswers.value?.let {
-            if (it >= minPercentOfRightAnswers) {
-                _progressBarTint.value = android.R.color.holo_green_light
-            } else {
-                _progressBarTint.value = android.R.color.holo_red_light
+                finishGame()
             }
         }
+        timer?.start()
     }
 
-    fun isWinner(minPercentOfRightAnswers: Int, minCountOfRightAnswers: Int): Boolean {
-        var isPercentMatch = false
-        var isScoreMatch = false
-        _percentOfRightAnswers.value?.let {
-            if (it >= minPercentOfRightAnswers) {
-                isPercentMatch = true
-            }
-        }
-        _score.value?.let {
-            if (it >= minCountOfRightAnswers) {
-                isScoreMatch = true
-            }
-        }
-        return isPercentMatch && isScoreMatch
+    private fun formatTime(millisUntilFinished: Long): String {
+        val seconds = millisUntilFinished / MILLIS_IN_SECONDS
+        val minutes = seconds / SECONDS_IN_MINUTES
+        val leftSeconds = seconds - (minutes * SECONDS_IN_MINUTES)
+        return String.format("%02d:%02d", minutes, leftSeconds)
     }
 
-    fun resetShouldLaunchGameFinished() {
-        _shouldLaunchGameFinishedFragment.value = false
+    private fun finishGame() {
+        _gameResult.value = GameResult(
+            enoughCount.value == true && enoughPercent.value == true,
+            countOfRightAnswers,
+            countOfQuestions,
+            gameSettings
+        )
     }
 
-    fun resetScore() {
-        _score.value = 0
-        _countResponse.value = 0
-        _percentOfRightAnswers.value = 0
-    }
-
-    fun resetTimer() {
-        launchTimer?.cancel()
-    }
-
-    fun resetIsReachThreshold() {
-        _isReachThresholdOfRightResponse.value = false
+    companion object {
+        private const val MILLIS_IN_SECONDS = 1000L
+        private const val SECONDS_IN_MINUTES = 60
     }
 }
 
