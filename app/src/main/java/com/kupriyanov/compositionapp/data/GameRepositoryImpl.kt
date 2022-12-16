@@ -35,7 +35,7 @@ object GameRepositoryImpl : GameRepository {
                     10,
                     10,
                     70,
-                    60
+                    5
                 )
             }
             Level.NORMAL -> {

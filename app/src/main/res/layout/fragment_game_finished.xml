@@ -1,71 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".presentation.GameFinishedFragment">
+<layout>
 
-    <ImageView
-        android:id="@+id/emoji_result"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_margin="48dp"
-        android:contentDescription="@string/emoji_result"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_sad" />
+    <data>
+        <variable
+            name="gameResult"
+            type="com.kupriyanov.compositionapp.domain.entities.GameResult" />
+    </data>
 
-    <TextView
-        android:id="@+id/required_score"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/required_score"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/emoji_result" />
+        android:layout_height="match_parent"
+        tools:context=".presentation.GameFinishedFragment">
 
-    <TextView
-        android:id="@+id/tv_score_answers"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/score_answers"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/required_score" />
+        <ImageView
+            android:id="@+id/emoji_result"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_margin="48dp"
+            android:contentDescription="@string/emoji_result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:emojiResult="@{gameResult.winner}"
+            tools:src="@drawable/ic_sad" />
 
-    <TextView
-        android:id="@+id/tv_required_percentage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/required_percentage"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_score_answers" />
+        <TextView
+            android:id="@+id/required_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="24dp"
+            app:requiresAnswers="@{gameResult.gameSettings.minCountOfRightAnswers}"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/emoji_result" />
 
-    <TextView
-        android:id="@+id/score_percentage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/score_percentage"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_required_percentage" />
+        <TextView
+            android:id="@+id/tv_score_answers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="12dp"
+            app:scoreAnswers="@{gameResult.countOfRightAnswers}"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/required_score" />
 
-    <Button
-        android:id="@+id/button_retry"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="@string/retry"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv_required_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="12dp"
+            app:requiredPercentage="@{gameResult.gameSettings.minPercentOfRightAnswers}"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_score_answers" />
+
+        <TextView
+            android:id="@+id/score_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="12dp"
+            app:scorePercentage="@{gameResult.percentOfRightAnswers}"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_required_percentage" />
+
+        <Button
+            android:id="@+id/button_retry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/retry"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

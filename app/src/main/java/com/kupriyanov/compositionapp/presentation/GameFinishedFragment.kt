@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bumptech.glide.Glide
-import com.kupriyanov.compositionapp.R
 import com.kupriyanov.compositionapp.databinding.FragmentGameFinishedBinding
 
 class GameFinishedFragment : Fragment() {
@@ -34,56 +32,7 @@ class GameFinishedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setButtonClickListener()
-        bindViews()
-    }
-
-    private fun bindViews() {
-        setEmoji()
-        setRequiredScore()
-        setScoreAnswers()
-        setRequiredPercentage()
-        setScorePercentage()
-    }
-
-    private fun setScorePercentage() {
-        val percentage = gameResult.percentOfRightAnswers
-        binding.scorePercentage.text = String.format(
-            resources.getString(R.string.score_percentage),
-            percentage
-        )
-    }
-
-    private fun setRequiredPercentage() {
-        val requiredPercentage = gameResult.gameSettings.minPercentOfRightAnswers
-        binding.tvRequiredPercentage.text = String.format(
-            resources.getString(R.string.required_percentage),
-            requiredPercentage
-        )
-    }
-
-    private fun setScoreAnswers() {
-        val score = gameResult.countOfRightAnswers
-        binding.tvScoreAnswers.text = String.format(
-            resources.getString(R.string.score_answers),
-            score
-        )
-    }
-
-    private fun setRequiredScore() {
-        val minCount = gameResult.gameSettings.minCountOfRightAnswers
-        binding.requiredScore.text = String.format(
-            resources.getString(R.string.required_score),
-            minCount
-        )
-    }
-
-    private fun setEmoji() {
-        val emojiResId = if (gameResult.winner) {
-            R.drawable.ic_smile
-        } else {
-            R.drawable.ic_sad
-        }
-        Glide.with(this).load(emojiResId).into(binding.emojiResult)
+        binding.gameResult = gameResult
     }
 
     private fun setButtonClickListener() {
