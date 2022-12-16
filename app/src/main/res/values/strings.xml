@@ -6,7 +6,6 @@
     <string name="game_rules">Правила игры: перед вами будет три фигуры, две снизу и одна сверху, в двух из них будут числа. Необходимо, чтобы сумма чисел из двух нижних фигур была равна числу в верхней фигуре, для этого нужно вставить недостающее число.\n\nПример: в верхнем круге число 7, в одном из нижних знак вопроса, а в другом число 4. Значит на месте вопросительного знака должно быть число 3, потому что 3 + 4 = 7
     </string>
     <string name="choose_level">Выберите уровень:</string>
-    <string name="test">Тестовый</string>
     <string name="easy">лёгкий</string>
     <string name="normal">средний</string>
     <string name="hard">сложный</string>
@@ -15,8 +14,9 @@
     <string name="score_percentage">Процент правильных ответов: %s</string>
     <string name="retry">Попробовать снова</string>
     <string name="right_answers">Правильных ответов %s из %s необходимых</string>
-    <string name="required_percentage">Необходимый процент правильных ответов: %s</string>
+    <string name="required_percentage">Минимальный процент правильных ответов: %s</string>
     <string name="required_score">Необходимое количество правильных ответов: %s</string>
     <string name="progress_answers">Правильных ответов %s (минимум %s)</string>
     <string name="emoji_result">emoji result</string>
+    <string name="very_hard">Очень сложный</string>
 </resources>

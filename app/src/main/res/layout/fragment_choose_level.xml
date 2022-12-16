@@ -16,13 +16,6 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/button_test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="@string/test" />
-
-    <Button
         android:id="@+id/button_easy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,5 +38,13 @@
         android:backgroundTint="@android:color/holo_red_light"
         android:layout_marginHorizontal="16dp"
         android:text="@string/hard" />
+
+    <Button
+        android:id="@+id/button_very_hard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="@string/very_hard" />
 
 </LinearLayout>

@@ -30,8 +30,8 @@ class ChooseLevelFragment : Fragment() {
 
     private fun setupClickListeners() {
         with(binding) {
-            buttonTest.setOnClickListener {
-                launchGameFragment(Level.TEST)
+            buttonVeryHard.setOnClickListener {
+                launchGameFragment(Level.VERY_HARD)
             }
 
             buttonEasy.setOnClickListener {
