@@ -2,8 +2,6 @@ package com.kupriyanov.compositionapp.presentation
 
 import android.app.Application
 import android.os.CountDownTimer
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +17,7 @@ import com.kupriyanov.compositionapp.domain.usecases.GetGameSettingsUseCase
 class GameViewModel(
     private val application: Application,
     private val level: Level
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val repository = GameRepositoryImpl
 
